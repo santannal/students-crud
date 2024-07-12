@@ -1,7 +1,7 @@
 package com.students.models;
 
 public class Student {
-    //Attributes
+    // Attributes
     private int id;
     private String name;
     private String email;
@@ -9,7 +9,7 @@ public class Student {
     private int idCurso;
     private int period;
 
-    //builders
+    // builders
     public Student(int id, String name, String email, String phone, int idCurso, int period) {
         this.id = id;
         this.name = name;
@@ -19,11 +19,11 @@ public class Student {
         this.period = period;
     }
 
-    public Student(){
+    public Student() {
 
     }
 
-    //Getters and Setters
+    // Getters and Setters
     public int getId() {
         return id;
     }
