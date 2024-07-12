@@ -3,38 +3,77 @@ $("#inputTelefone").mask("(99) 9999-99999");
 
 var students = [];
 
-var courses = [
-    { id: 1, name: "Java" },
-    { id: 2, name: "Angular" },
-    { id: 3, name: "HTML + CSS" }
+var courses = [];
+
+var turnos = [
+    { id: 1, name: "Manhã" },
+    { id: 2, name: "Tarde" },
+    { id: 3, name: "Noite" }
 ];
 
+loadCourses();
 loadStudents();
 
+function loadCourses() {
+    $.ajax({
+        url: "http://localhost:8080/courses",
+        type: "GET",
+        async: false,
+        success:
+            (response) => {
+                courses = response;
+                for (var cou of courses) {
+                    document.getElementById("selectCurso").innerHTML += `<option value="${cou.id}">${cou.name}</option>`;
+                }
+            }
+    });
+}
+
 function loadStudents() {
-    for (let op of students) {
-        addNewRow(op);
-    }
+    $.getJSON("http://localhost:8080/student", (response) => {
+        students = response;
+        for (let op of students) {
+            addNewRow(op);
+        }
+    });
 }
 
 function save() {
+    const selectedValue = getSelectedRadioValue();
     var op = {
         id: students.length + 1,
         name: document.getElementById("inputName").value,
         email: document.getElementById("inputEmail").value,
-        telephone: document.getElementById("inputTelefone").value,
-        course: document.getElementById("selectCurso").value,
-        morning: document.getElementById("radioManha").checked,
-        afternoon: document.getElementById("radioTarde").checked,
-        night: document.getElementById("radioNoite").checked,
+        phone: document.getElementById("inputTelefone").value,
+        idCurso: document.getElementById("selectCurso").value,
+        period: selectedValue,
     };
 
-    addNewRow(op);
-    students.push(op);
+    $.ajax({
+        url: "http://localhost:8080/student",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(op),
+        success:
+            (student) => {
+                addNewRow(op);
+                students.push(op);
 
-    document.getElementById("idformulario").reset();
+                document.getElementById("idformulario").reset();
+            }
+    });
 }
 
+function getSelectedRadioValue() {
+
+    const radios = document.getElementsByName("flexRadioPeriodo");
+
+    for (const radio of radios) {
+        if (radio.checked) {
+            return radio.value;
+        }
+    }
+}
 
 function addNewRow(op) {
     var table = document.getElementById("studentstable");
@@ -52,26 +91,18 @@ function addNewRow(op) {
     cell.className = "d-none d-md-table-cell";
     cell.appendChild(emailNode);
 
-    var telephoneNode = document.createTextNode(op.telephone);
+    var telephoneNode = document.createTextNode(op.phone);
     cell = newRow.insertCell();
     cell.className = "d-none d-md-table-cell";
     cell.appendChild(telephoneNode);
 
-    var courseNode = document.createTextNode(courses[op.course - 1].name);
+    var courseNode = document.createTextNode(courses[op.idCurso - 1].name);
     cell = newRow.insertCell();
     cell.className = "d-none d-md-table-cell";
     cell.appendChild(courseNode);
 
-    var opcao = "";
-    if (op.morning)
-        opcao = "Manhã";
-    else if (op.afternoon)
-        opcao = "Tarde";
-    else if (op.night)
-        opcao = "Noite";
-
-    newRow.insertCell().innerHTML = `<p class="d-none d-md-table-cell">${opcao}</p>`;
-
-    /* var periodNode = document.createTextNode(periods[op.period - 1].name);
-     newRow.insertCell().appendChild(periodNode); */
+    var periodNode = document.createTextNode(turnos.find(turno => turno.id == op.period).name);
+    cell = newRow.insertCell();
+    cell.className = "d-none d-md-table-cell";
+    cell.appendChild(periodNode);
 }

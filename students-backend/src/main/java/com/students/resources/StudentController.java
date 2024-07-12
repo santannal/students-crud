@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class StudentController {
     private List<Student> students = new ArrayList<>();
 
-    @PostMapping("students")
+    @PostMapping("student")
     public ResponseEntity<Student> save(@RequestBody Student student) {
         student.setId(students.size() + 1);
         students.add(student);
@@ -33,7 +33,7 @@ public class StudentController {
         return ResponseEntity.created(location).body(student);
     }
 
-    @GetMapping("students/{id}")
+    @GetMapping("student/{id}")
     public ResponseEntity<Student> getStudent(@PathVariable int id) {
         Student stu = students.stream().filter(s -> s.getId() == id).findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student Not Found"));
@@ -41,7 +41,7 @@ public class StudentController {
         return ResponseEntity.ok(stu);
     }
 
-    @GetMapping("/students")
+    @GetMapping("/student")
     public List<Student> getStudents() {
         return students;
     }
