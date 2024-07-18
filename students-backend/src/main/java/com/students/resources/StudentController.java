@@ -2,6 +2,8 @@ package com.students.resources;
 
 import java.net.URI;
 import java.util.ArrayList;
+//import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -20,7 +22,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @CrossOrigin
 public class StudentController {
-    private List<Student> students = new ArrayList<>();
+    private List<Student> students = new ArrayList<>(Arrays.asList(
+            new Student(1, "Leonardo", "leonardo@email.com", "(11) 9736-31403", 1, 1),
+            new Student(2, "Glauco", "glauco@email.com", "(15) 1111-11111", 2, 2),
+            new Student(3, "Wilson", "wilson@email.com", "(12) 2222-22222", 3, 3)));
 
     @PostMapping("student")
     public ResponseEntity<Student> save(@RequestBody Student student) {
